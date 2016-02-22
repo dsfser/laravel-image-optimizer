@@ -1,5 +1,8 @@
 <?php namespace Approached\LaravelImageOptimizer;
 
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
 class ImageOptimizer
 {
 
@@ -40,14 +43,27 @@ class ImageOptimizer
 
     public function optimizeJPG($filepath)
     {
-        $this->jpgOptimzer->optimize($filepath);
+
+        $process = new Process('jpegoptim '.$filepath);
+        $process->run();
+
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
 
         return true;
     }
 
     public function optimizePNG($filepath)
     {
-        $this->pngOptimzer->optimize($filepath);
+        $process = new Process('optipng '.$filepath);
+        $process->run();
+
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
 
         return true;
     }
